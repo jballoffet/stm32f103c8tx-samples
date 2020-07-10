@@ -6,9 +6,7 @@
  */
 #include "main.h"
 #include "usb_device.h"
-#include "usbd_hid.h"
-
-extern USBD_HandleTypeDef hUsbDeviceFS;
+#include "usb_hid_mouse.h"
 
 /*!
  * @brief System clock configuration.
@@ -23,12 +21,16 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 
 /*!
+ * @brief Draw a simple house to test USB HID Mouse behaviour.
+ * @return None.
+ */
+static void draw_house(void);
+
+/*!
  * @brief Application entry point.
- * @return	  Execution final status.
+ * @return Execution final status.
  */
 int main(void) {
-  uint8_t HID_buffer[4] = {0};
-
   // MCU Configuration.
   // Reset of all peripherals, initializes the Flash interface and the Systick.
   HAL_Init();
@@ -40,12 +42,14 @@ int main(void) {
   MX_GPIO_Init();
   MX_USB_DEVICE_Init();
 
-  HID_buffer[1] = 100;
+  // Wait 10 seconds before start drawing.
+  HAL_Delay(10000);
 
   // Infinite loop.
   while (1) {
-    USBD_HID_SendReport(&hUsbDeviceFS, HID_buffer, 4);
-    HAL_Delay(1000);
+    // Draw a simple house to test USB HID Mouse behaviour.
+    draw_house();
+    HAL_Delay(5000);
   }
 }
 
@@ -91,4 +95,30 @@ static void MX_GPIO_Init(void) {
 
 void Error_Handler(void) {
   // TODO: Implement error handler.
+}
+
+static void draw_house(void) {
+  // Draw walls.
+  USB_HID_Mouse_Press(LEFT_BUTTON);
+  HAL_Delay(500);
+  USB_HID_Mouse_Move(0, 50, 0);
+  HAL_Delay(500);
+  USB_HID_Mouse_Move(100, 0, 0);
+  HAL_Delay(500);
+  USB_HID_Mouse_Move(0, -50, 0);
+  HAL_Delay(500);
+  USB_HID_Mouse_Release(LEFT_BUTTON);
+  HAL_Delay(500);
+
+  // Draw roof.
+  USB_HID_Mouse_Press(RIGHT_BUTTON);
+  HAL_Delay(500);
+  USB_HID_Mouse_Move(-100, 0, 0);
+  HAL_Delay(500);
+  USB_HID_Mouse_Move(50, -25, 0);
+  HAL_Delay(500);
+  USB_HID_Mouse_Move(50, 25, 0);
+  HAL_Delay(500);
+  USB_HID_Mouse_Release(RIGHT_BUTTON);
+  HAL_Delay(500);
 }
