@@ -2,11 +2,13 @@
  * @file   main.c
  * @brief  Application main file
  * @author Javier Balloffet <javier.balloffet@gmail.com>
- * @date   Jul 5, 2020
+ * @date   Jul 9, 2020
  */
 #include "main.h"
 #include "usb_device.h"
-#include "usb_hid_keyboard.h"
+#include "usbd_hid.h"
+
+extern USBD_HandleTypeDef hUsbDeviceFS;
 
 /*!
  * @brief System clock configuration.
@@ -25,6 +27,8 @@ static void MX_GPIO_Init(void);
  * @return	  Execution final status.
  */
 int main(void) {
+  uint8_t HID_buffer[4] = {0};
+
   // MCU Configuration.
   // Reset of all peripherals, initializes the Flash interface and the Systick.
   HAL_Init();
@@ -36,10 +40,11 @@ int main(void) {
   MX_GPIO_Init();
   MX_USB_DEVICE_Init();
 
+  HID_buffer[1] = 100;
+
   // Infinite loop.
   while (1) {
-    // Send string using STM32 as a USB HID Keyboard, at 1 Hz.
-    USB_HID_Keyboard_SendString("Hello World!\n");
+    USBD_HID_SendReport(&hUsbDeviceFS, HID_buffer, 4);
     HAL_Delay(1000);
   }
 }
