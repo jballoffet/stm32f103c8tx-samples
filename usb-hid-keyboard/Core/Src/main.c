@@ -39,7 +39,7 @@ int main(void) {
   // Infinite loop.
   while (1) {
     // Send string using STM32 as a USB HID Keyboard, at 1 Hz.
-    USB_HID_Keyboard_SendString("Hello World!\n");
+    USB_HID_Keyboard_Write("Hello World!", 12);
     HAL_Delay(1000);
   }
 }
