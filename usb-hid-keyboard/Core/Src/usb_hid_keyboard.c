@@ -34,7 +34,7 @@
  */
 #define SHIFT_FLAG 0x80
 
-const uint8_t hid_to_ascii_map[128] = {
+const uint8_t ascii_to_hid_map[128] = {
   0x00,             // NUL
   0x00,             // SOH
   0x00,             // STX
@@ -166,6 +166,11 @@ const uint8_t hid_to_ascii_map[128] = {
 };
 
 /*
+ * USB handler.
+ */
+extern USBD_HandleTypeDef hUsbDeviceFS;
+
+/*
  * Keyboard report structure.
  */
 typedef struct {
@@ -178,11 +183,6 @@ typedef struct {
  * Keyboard report.
  */
 static KeyboardReport keyboard_report;
-
-/*
- * USB handler.
- */
-extern USBD_HandleTypeDef hUsbDeviceFS;
 
 /*!
  * @brief Add a key to keyboard report.
@@ -204,7 +204,7 @@ static int remove_key_from_report(uint8_t key);
  * @brief Send keyboard report.
  * @return True (1) in case of success, otherwise false (0).
  */
-static int send_report();
+static int send_report(void);
 
 int USB_HID_Keyboard_Tap(uint8_t key) {
   if (!USB_HID_Keyboard_Press(key)) {
@@ -223,7 +223,7 @@ int USB_HID_Keyboard_Press(uint8_t key) {
     key = 0;
   } else {
     // Key is a printing key. Convert from ASCII to HID code.
-    key = hid_to_ascii_map[key];
+    key = ascii_to_hid_map[key];
     if (!key) {
       // Invalid key.
       return 0;
@@ -253,7 +253,7 @@ int USB_HID_Keyboard_Release(uint8_t key) {
     key = 0;
   } else {
     // Key is a printing key. Convert from ASCII to HID code.
-    key = hid_to_ascii_map[key];
+    key = ascii_to_hid_map[key];
     if (!key) {
       // Invalid key.
       return 0;
@@ -282,7 +282,7 @@ int USB_HID_Keyboard_ReleaseAll() {
   return send_report();
 }
 
-size_t USB_HID_Keyboard_Write(uint8_t* keys, size_t size) {
+int USB_HID_Keyboard_Write(uint8_t* keys, int size) {
   int i;
   for (i = 0; i < size; i++) {
     if (!USB_HID_Keyboard_Tap(keys[i])) {
@@ -333,9 +333,12 @@ static int remove_key_from_report(uint8_t key) {
   return 0;
 }
 
-static int send_report() {
-  if (USBD_HID_SendReport(&hUsbDeviceFS, &keyboard_report, sizeof(KeyboardReport)) != HAL_OK) {
+static int send_report(void) {
+  if (USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t*) &keyboard_report, sizeof(KeyboardReport)) != HAL_OK) {
     return 0;
   }
+
+  // Small delay to avoid communication issues.
+  HAL_Delay(50);
   return 1;
 }

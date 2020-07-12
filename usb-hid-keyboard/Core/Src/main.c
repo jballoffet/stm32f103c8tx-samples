@@ -21,8 +21,14 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 
 /*!
+ * @brief Simple function to test USB HID keyboard behaviour.
+ * @return None.
+ */
+static void test_keyboard(void);
+
+/*!
  * @brief Application entry point.
- * @return	  Execution final status.
+ * @return Execution final status.
  */
 int main(void) {
   // MCU Configuration.
@@ -38,8 +44,7 @@ int main(void) {
 
   // Infinite loop.
   while (1) {
-    // Send string using STM32 as a USB HID Keyboard, at 1 Hz.
-    USB_HID_Keyboard_Write("Hello World!", 12);
+    test_keyboard();
     HAL_Delay(1000);
   }
 }
@@ -86,4 +91,19 @@ static void MX_GPIO_Init(void) {
 
 void Error_Handler(void) {
   // TODO: Implement error handler.
+}
+
+static void test_keyboard(void) {
+  USB_HID_Keyboard_Write((uint8_t*) "Hello, world!\n", 14);
+  USB_HID_Keyboard_Write((uint8_t*) "Sent from ", 10);
+  USB_HID_Keyboard_Press(KEY_LEFT_SHIFT);
+  USB_HID_Keyboard_Tap('s');
+  USB_HID_Keyboard_Tap('t');
+  USB_HID_Keyboard_Tap('m');
+  USB_HID_Keyboard_Release(KEY_LEFT_SHIFT);
+  USB_HID_Keyboard_Tap('3');
+  USB_HID_Keyboard_Tap('2');
+  USB_HID_Keyboard_Tap('.');
+  USB_HID_Keyboard_Tap('\n');
+  USB_HID_Keyboard_ReleaseAll();
 }

@@ -102,6 +102,6 @@ int USB_HID_Keyboard_ReleaseAll();
  * @param[in] size Buffer length in bytes.
  * @return    Bytes sent.
  */
-size_t USB_HID_Keyboard_Write(uint8_t* keys, size_t size);
+int USB_HID_Keyboard_Write(uint8_t* keys, int size);
 
 #endif // INC_USB_HID_KEYBOARD_H_
