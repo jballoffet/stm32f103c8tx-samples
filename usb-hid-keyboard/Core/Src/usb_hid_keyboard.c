@@ -273,7 +273,7 @@ int USB_HID_Keyboard_Release(uint8_t key) {
   return send_report();
 }
 
-int USB_HID_Keyboard_ReleaseAll() {
+int USB_HID_Keyboard_ReleaseAll(void) {
   int i = 0;
   for (i = 0; i < 6; i++) {
     keyboard_report.keys[i] = 0;

@@ -93,7 +93,7 @@ int USB_HID_Keyboard_Release(uint8_t key);
  * @brief Release all keys.
  * @return True (1) in case of success, otherwise false (0).
  */
-int USB_HID_Keyboard_ReleaseAll();
+int USB_HID_Keyboard_ReleaseAll(void);
 
 /*!
  * @brief Tap multiple keys one after another.

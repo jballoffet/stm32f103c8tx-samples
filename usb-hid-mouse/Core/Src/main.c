@@ -21,10 +21,10 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 
 /*!
- * @brief Draw a simple house to test USB HID Mouse behaviour.
+ * @brief Simple function to test USB HID mouse behaviour.
  * @return None.
  */
-static void draw_house(void);
+static void test_mouse(void);
 
 /*!
  * @brief Application entry point.
@@ -47,9 +47,8 @@ int main(void) {
 
   // Infinite loop.
   while (1) {
-    // Draw a simple house to test USB HID Mouse behaviour.
-    draw_house();
-    HAL_Delay(5000);
+    test_mouse();
+    HAL_Delay(1000);
   }
 }
 
@@ -97,9 +96,10 @@ void Error_Handler(void) {
   // TODO: Implement error handler.
 }
 
-static void draw_house(void) {
+static void test_mouse(void) {
+  // Draw simple house to test USB HID mouse behaviour.
   // Draw walls.
-  USB_HID_Mouse_Press(LEFT_BUTTON);
+  USB_HID_Mouse_Press(BUTTON_LEFT);
   HAL_Delay(500);
   USB_HID_Mouse_Move(0, 50, 0);
   HAL_Delay(500);
@@ -107,11 +107,11 @@ static void draw_house(void) {
   HAL_Delay(500);
   USB_HID_Mouse_Move(0, -50, 0);
   HAL_Delay(500);
-  USB_HID_Mouse_Release(LEFT_BUTTON);
+  USB_HID_Mouse_Release(BUTTON_LEFT);
   HAL_Delay(500);
 
   // Draw roof.
-  USB_HID_Mouse_Press(RIGHT_BUTTON);
+  USB_HID_Mouse_Press(BUTTON_RIGHT);
   HAL_Delay(500);
   USB_HID_Mouse_Move(-100, 0, 0);
   HAL_Delay(500);
@@ -119,6 +119,6 @@ static void draw_house(void) {
   HAL_Delay(500);
   USB_HID_Mouse_Move(50, 25, 0);
   HAL_Delay(500);
-  USB_HID_Mouse_Release(RIGHT_BUTTON);
+  USB_HID_Mouse_Release(BUTTON_RIGHT);
   HAL_Delay(500);
 }
